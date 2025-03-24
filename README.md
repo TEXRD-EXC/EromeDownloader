@@ -7,22 +7,14 @@ The EromeDownloader script is a compact yet powerful tool written in Python, des
 First install the necessary requirements.
 
 ```
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 Next, run the script by using the command:
 
 ```
-python3 dump.py -u [url]
+python3 dump.py
 ```
-
-Provide the URL of the album you wish to download as the argument **[url]**.
-
-### Arguments
-- **-u, --url** : URL of the album to download. (Required)
-- **-c, --connections** : Max connections to use for downloading files. Default is 5.
-- **-sv, --skip-videos** : Skip downloading videos.
-- **-si, --skip-images** : Skip downloading images.
 
 ### Where are the files saved?
 

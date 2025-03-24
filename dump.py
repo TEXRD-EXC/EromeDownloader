@@ -3,6 +3,8 @@ import asyncio
 import re
 import aiohttp
 import aiofiles
+import random
+import shutil
 from aiohttp import ClientTimeout
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
@@ -13,7 +15,6 @@ USER_AGENT = "Mozilla/5.0"
 HOST = "www.erome.com"
 CHUNK_SIZE = 1024
 
-
 def _clean_album_title(title: str, default_title="temp") -> str:
     """Remove illegal characters from the album title"""
     illegal_chars = r'[\\/:*?"<>|]'
@@ -21,14 +22,12 @@ def _clean_album_title(title: str, default_title="temp") -> str:
     title = title.strip(". ")
     return title if title else default_title
 
-
 def _get_final_download_path(album_title: str) -> Path:
     """Create a directory with the title of the album"""
     final_path = Path("downloads") / album_title
     if not final_path.exists():
         final_path.mkdir(parents=True)
     return final_path
-
 
 async def dump(url: str, max_connections: int, skip_videos: bool, skip_images: bool):
     """Collect album data and download the album"""
@@ -47,6 +46,23 @@ async def dump(url: str, max_connections: int, skip_videos: bool, skip_images: b
         download_path=download_path,
     )
 
+    zip_path = shutil.make_archive(str(download_path), 'zip', str(download_path))
+    tqdm.write(f"[*] Created zip file: {zip_path}")
+
+    shutil.rmtree(download_path)
+    tqdm.write(f"[*] Deleted folder: {download_path}")
+
+    # Remove processed URL from url.txt
+    with open("url.txt", "r") as f:
+        urls = [line.strip() for line in f if line.strip()]
+    urls.remove(url)
+    with open("url.txt", "w") as f:
+        f.writelines(line + "\n" for line in urls)
+    tqdm.write(f"[*] Removed processed URL: {url}")
+
+    final_delay = random.randint(15, 25)
+    tqdm.write(f"[*] Waiting {final_delay} seconds before finishing...")
+    await asyncio.sleep(final_delay)
 
 async def _download(
     album: str,
@@ -60,23 +76,16 @@ async def _download(
         headers={"Referer": album, "User-Agent": USER_AGENT},
         timeout=ClientTimeout(total=None),
     ) as session:
-        tasks = [
-            _download_file(
+        for url in urls:
+            await _download_file(
                 session=session,
                 url=url,
                 semaphore=semaphore,
                 download_path=download_path,
             )
-            for url in urls
-        ]
-        await tqdm_asyncio.gather(
-            *tasks,
-            colour="MAGENTA",
-            desc="Album Progress",
-            unit="file",
-            leave=True,
-        )
-
+            delay = random.randint(1, 5)
+            tqdm.write(f"[*] Waiting {delay} seconds before next download...")
+            await asyncio.sleep(delay)
 
 async def _download_file(
     session: aiohttp.ClientSession,
@@ -115,64 +124,61 @@ async def _download_file(
             else:
                 tqdm.write(f"[ERROR] Failed to download {url}")
 
-
 async def _collect_album_data(
     url: str, skip_videos: bool, skip_images: bool
 ) -> tuple[str, list[str]]:
-    """Collect videos and images from the album"""
+    """Collect videos and images from the album with retry logic"""
     headers = {"User-Agent": USER_AGENT}
-    async with aiohttp.ClientSession(headers=headers) as session:
-        async with session.get(url) as response:
-            html_content = await response.text()
-            soup = BeautifulSoup(html_content, "html.parser")
-            album_title = _clean_album_title(
-                soup.find("meta", property="og:title")["content"]
-            )
-            videos = (
-                [video_source["src"] for video_source in soup.find_all("source")]
-                if not skip_videos
-                else []
-            )
-            images = (
-                [
-                    image["data-src"]
-                    for image in soup.find_all("img", {"class": "img-back"})
-                ]
-                if not skip_images
-                else []
-            )
-            album_urls = list({*videos, *images})
-            return album_title, album_urls
-
+    retries = 5
+    for attempt in range(retries):
+        try:
+            async with aiohttp.ClientSession(headers=headers) as session:
+                async with session.get(url) as response:
+                    html_content = await response.text()
+                    soup = BeautifulSoup(html_content, "html.parser")
+                    album_title = _clean_album_title(
+                        soup.find("meta", property="og:title")["content"]
+                    )
+                    videos = (
+                        [video_source["src"] for video_source in soup.find_all("source")]
+                        if not skip_videos
+                        else []
+                    )
+                    images = (
+                        [
+                            image["data-src"]
+                            for image in soup.find_all("img", {"class": "img-back"})
+                        ]
+                        if not skip_images
+                        else []
+                    )
+                    album_urls = list({*videos, *images})
+                    return album_title, album_urls
+        except (aiohttp.ClientError, asyncio.TimeoutError) as e:
+            tqdm.write(f"[ERROR] Attempt {attempt + 1}/{retries} failed: {e}")
+            await asyncio.sleep(random.randint(5, 10))
+    raise RuntimeError(f"[ERROR] Failed to fetch album data after {retries} attempts")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-u", "--url", help="URL to download", type=str, required=True)
-    parser.add_argument(
-        "-c",
-        "--connections",
-        help="Maximum number of simultaneous connections",
-        type=int,
-        default=5,
-    )
-    parser.add_argument(
-        "-sv",
-        "--skip-videos",
-        action=argparse.BooleanOptionalAction,
-        help="Skip downloading videos",
-    )
-    parser.add_argument(
-        "-si",
-        "--skip-images",
-        action=argparse.BooleanOptionalAction,
-        help="Skip downloading images",
-    )
-    args = parser.parse_args()
-    asyncio.run(
-        dump(
-            url=args.url,
-            max_connections=args.connections,
-            skip_videos=args.skip_videos,
-            skip_images=args.skip_images,
+    try:
+        with open("url.txt", "r") as f:
+            urls = [line.strip() for line in f if line.strip()]
+    except FileNotFoundError:
+        urls = []
+    
+    if not urls:
+        urls.append(input("Enter the URL to download: "))
+
+    max_connections = 5  # Default max connections
+    skip_videos = False
+    skip_images = False
+
+    for url in urls:
+        asyncio.run(
+            dump(
+                url=url,
+                max_connections=max_connections,
+                skip_videos=skip_videos,
+                skip_images=skip_images,
+            )
         )
-    )

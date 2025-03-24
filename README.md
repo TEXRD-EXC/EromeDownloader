@@ -17,7 +17,7 @@ First, downlaod the zipped file:
 
 Now, unzip the file
 
-![Demo]()
+![Demo](https://raw.githubusercontent.com/TEXRD-EXC/EromeDownloader/refs/heads/main/unzip.gif)
 
 Open cmd and run this command
 

@@ -12,11 +12,13 @@ The EromeDownloader script is a compact yet powerful tool written in Python, des
 
 ### Installation
 
-1. **Download the zipped file:**  
-   ![Demo](https://raw.githubusercontent.com/TEXRD-EXC/EromeDownloader/refs/heads/main/how%20to%20download.gif)
+1. **Download the zipped file:**
 
-2. **Unzip the file:**  
-   ![Demo](https://raw.githubusercontent.com/TEXRD-EXC/EromeDownloader/refs/heads/main/unzip.gif)
+   ![Demo](https://raw.githubusercontent.com/TEXRD-EXC/EromeDownloader/refs/heads/main/Images/how%20to%20download.gif)
+
+2. **Unzip the file:**
+
+   ![Demo](https://raw.githubusercontent.com/TEXRD-EXC/EromeDownloader/refs/heads/main/Images/unzip.gif)
 
 3. **Open CMD and navigate to the folder:**  
    ```
@@ -29,6 +31,7 @@ The EromeDownloader script is a compact yet powerful tool written in Python, des
    ```
 
 ### Usage
+   ![Demo](https://raw.githubusercontent.com/TEXRD-EXC/EromeDownloader/refs/heads/main/Images/Capture%20(1).png)
 
 When running the script, you will be prompted to choose an option:
 

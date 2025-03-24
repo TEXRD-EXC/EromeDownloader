@@ -2,15 +2,25 @@
 
 The EromeDownloader script is a compact yet powerful tool written in Python, designed to download albums from erome.com, including videos, images, and gifs.
 
-### How to use?
+###Features
+-Can download multiple albums one after another
+-Added delays between each download therefore it's much harder to be ip banned
+-Has been tested for downloading over 30+ albums in a single go without any interruptions
+-Automatically creates a zip file of each album after the download is complete
+
+### How to install?
 First, downlaod the zipped file:
 
 ![Demo](https://raw.githubusercontent.com/TEXRD-EXC/EromeDownloader/refs/heads/main/how%20to%20download.gif)
 
-Now, unzip the zipped file open cmd and run this command
+Now, unzip the file
+
+![Demo]()
+
+Open cmd and run this command
 
 ```
-cd [location of the EromeDownloader folder]
+cd [location/path of the EromeDownloader-main folder]
 ```
 
 Next, install the necessary requirements.
@@ -18,13 +28,20 @@ Next, install the necessary requirements.
 ```
 pip install -r requirements.txt
 ```
+Now you can close cmd
 
-Now, Enter the links in the `url.txt` file in the format:
+###How to use?
+Enter the links in the `url.txt` file in the format:
 
 ```
 https://www.example.com/ifewcy
 https://www.example.com/gesjvt
 https://www.example.com/dsnvdu
+```
+Now, open the EromeDownloader-main folder in cmd
+
+```
+cd [location/path of the EromeDownloader-main folder]
 ```
 
 Next, run the script by using the command:

@@ -4,54 +4,68 @@ The EromeDownloader script is a compact yet powerful tool written in Python, des
 
 ### Features
 
-- Can download multiple albums one after another.
-- Added delays between each download therefore it's much harder to be ip banned.
-- Has been tested for downloading over 30+ albums in a single go without any interruptions.
-- Automatically creates a zip file of each album after the download is complete.
+- Download single albums or multiple albums in sequence.
+- Extract all album links from a profile and download them automatically.
+- Built-in delays to prevent IP bans.
+- Tested for downloading 30+ albums in one go without issues.
+- Automatically zips each album after downloading and deletes the unzipped folder.
 
-### How to install?
+### Installation
 
-First, downlaod the zipped file:
+1. **Download the zipped file:**  
+   ![Demo](https://raw.githubusercontent.com/TEXRD-EXC/EromeDownloader/refs/heads/main/how%20to%20download.gif)
 
-![Demo](https://raw.githubusercontent.com/TEXRD-EXC/EromeDownloader/refs/heads/main/how%20to%20download.gif)
+2. **Unzip the file:**  
+   ![Demo](https://raw.githubusercontent.com/TEXRD-EXC/EromeDownloader/refs/heads/main/unzip.gif)
 
-Now, unzip the file
+3. **Open CMD and navigate to the folder:**  
+   ```
+   cd [location/path of the EromeDownloader-main folder]
+   ```
 
-![Demo](https://raw.githubusercontent.com/TEXRD-EXC/EromeDownloader/refs/heads/main/unzip.gif)
+4. **Install the necessary requirements:**  
+   ```
+   pip install -r requirements.txt
+   ```
 
-Open cmd and run this command
+### Usage
 
-```
-cd [location/path of the EromeDownloader-main folder]
-```
+When running the script, you will be prompted to choose an option:
 
-Next, install the necessary requirements.
+1. **Download a single album**
+   - Run the script and enter the album link.
+   - Command:
+     ```
+     python dump.py
+     ```
 
-```
-pip install -r requirements.txt
-```
-Now you can close cmd
+2. **Download all albums from a profile**
+   - Run the script and enter the profile link.
+   - The script will extract all albums from the profile and download them.
+   - Command:
+     ```
+     python dump.py
+     ```
+   - The albums will be stored under `downloads/profile-name/`.
 
-### How to use?
-Enter the links in the `url.txt` file in the format:
-
-```
-https://www.example.com/ifewcy
-https://www.example.com/gesjvt
-https://www.example.com/dsnvdu
-```
-Now, open the EromeDownloader-main folder in cmd
-
-```
-cd [location/path of the EromeDownloader-main folder]
-```
-
-Next, run the script by using the command:
-
-```
-python dump.py
-```
+3. **Download multiple albums from `url.txt`**
+   - Add album links in `url.txt`, one per line.
+   - Example format:
+     ```
+     https://www.example.com/album1
+     https://www.example.com/album2
+     https://www.example.com/album3
+     ```
+   - Run the script and choose option 3.
+   - Command:
+     ```
+     python dump.py
+     ```
 
 ### Where are the files saved?
 
-The files will be saved in a folder named "downloads" and within that, a zipped file with the album name will be created and all files from that album will be saved there.
+- All downloaded files are stored in the `downloads` folder.
+- If downloaded via profile mode, albums are saved under `downloads/profile-name/`.
+- Each album is automatically zipped after downloading.
+
+Enjoy seamless album downloads with EromeDownloader V2!

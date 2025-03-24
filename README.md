@@ -9,6 +9,7 @@ The EromeDownloader script is a compact yet powerful tool written in Python, des
 - Built-in delays to prevent IP bans.
 - Tested for downloading 30+ albums in one go without issues.
 - Automatically zips each album after downloading and deletes the unzipped folder.
+- Retry 5 times before giving up.
 
 ### Installation
 
